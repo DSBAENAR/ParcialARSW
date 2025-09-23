@@ -1,6 +1,9 @@
 package com.sparkweb.core.services;
 
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -13,6 +16,8 @@ public class ApiService {
 
   
     private final RestTemplate restTemplate;
+
+    private final Map<String,Response> cache = new ConcurrentHashMap<>();
 
     
     @Value("${alphavantage.key}")
@@ -29,8 +34,12 @@ public class ApiService {
 
     public Response getDataIntraDay(String symbol, String interval){
 
-        if(symbol == null || interval == null){
-            throw new IllegalArgumentException("The arguments cannot be null or could not be found");
+        checkParameters(symbol, interval);
+        
+        String cacheKey = "intraday-" + symbol + "-" + interval;
+        
+        if(cache.containsKey(cacheKey)){
+            return cache.get(cacheKey);
         }
 
         String url = apiUrl + 
@@ -41,12 +50,19 @@ public class ApiService {
 
         Response response = getResponse(url);
 
+        cache.put(cacheKey, response);
+
         return response;
     }
 
-    public String getDataDaily(String symbol, String interval){
+    public Response getDataDaily(String symbol, String interval){
 
         checkParameters(symbol, interval);
+
+        String cacheKey = "daily-" + symbol + "-" + interval;
+
+        if(cache.containsKey(cacheKey)){return cache.get(cacheKey);}        
+
 
         String url = apiUrl + 
                      "?function=" + Times.TIME_SERIES_DAILY +
@@ -57,15 +73,21 @@ public class ApiService {
         
         Response response = getResponse(url);
 
-        return response.toString();
+        cache.put(cacheKey, response);
+
+        return response;
 
     }
 
 
 
-    public String getDataWeekly(String symbol, String interval){
+    public Response getDataWeekly(String symbol, String interval){
 
         checkParameters(symbol, interval);
+
+        String cacheKey = "weekly-" + symbol + "-" + interval;
+        
+        if(cache.containsKey(cacheKey)){return cache.get(cacheKey);}  
 
         String url = apiUrl + 
                      "?function=" + Times.TIME_SERIES_WEEKLY +
@@ -76,13 +98,19 @@ public class ApiService {
         
         Response response = getResponse(url);
 
-        return response.toString();
+        cache.put(cacheKey, response);
+
+        return response;
 
     }
 
-    public String getDataMonthly(String symbol, String interval){
+    public Response getDataMonthly(String symbol, String interval){
 
         checkParameters(symbol, interval);
+
+        String cacheKey = "monthly-" + symbol + "-" + interval;
+        
+        if(cache.containsKey(cacheKey)){return cache.get(cacheKey);}  
 
         String url = apiUrl + 
                      "?function=" + Times.TIME_SERIES_MONTHLY +
@@ -93,7 +121,9 @@ public class ApiService {
         
         Response response = getResponse(url);
 
-        return response.toString();
+        cache.put(cacheKey, response);
+
+        return response;
 
     }
 

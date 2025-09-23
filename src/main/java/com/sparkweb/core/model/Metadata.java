@@ -1,11 +1,15 @@
 package com.sparkweb.core.model;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Metadata(String information, String symbol, LocalDateTime lastRefreshed, String interval, String outputSize, ZoneId timeZone) {
-
-}
+public record Metadata(
+    @JsonProperty("1. Information") String information,
+    @JsonProperty("2. Symbol") String symbol,
+    @JsonProperty("3. Last Refreshed") String lastRefreshed,
+    @JsonProperty("4. Interval") String interval,
+    @JsonProperty("5. Output Size") String outputSize,
+    @JsonProperty("6. Time Zone") String timeZone
+) {}

@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "alphavantage.key",
+    "type": "java.lang.String",
+    "description": "A description for 'alphavantage.key'"
+  },
+  {
+    "name": "alphavantage.url",
+    "type": "java.lang.String",
+    "description": "A description for 'alphavantage.url'"
+  }
+]}

@@ -27,7 +27,7 @@ public class ApiService {
     }
     
 
-    public String getDataIntraDay(String symbol, String interval){
+    public Response getDataIntraDay(String symbol, String interval){
 
         if(symbol == null || interval == null){
             throw new IllegalArgumentException("The arguments cannot be null or could not be found");
@@ -41,7 +41,7 @@ public class ApiService {
 
         Response response = getResponse(url);
 
-        return response.toString();
+        return response;
     }
 
     public String getDataDaily(String symbol, String interval){

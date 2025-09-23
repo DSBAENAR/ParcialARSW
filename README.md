@@ -12,12 +12,15 @@ Este proyecto es una aplicación REST desarrollada en **Spring Boot 3.5.6** que 
 - **Manejo de errores robusto**: Validación de parámetros y manejo centralizado de excepciones
 - **Arquitectura REST**: Endpoints bien estructurados siguiendo principios RESTful
 - **Configuración externa**: API key y URL configurables mediante `application.properties`
+- **Cliente de pruebas**: Herramienta integrada para testing de carga y evaluación de performance
 
 ## Arquitectura del Proyecto
 
 ```
 src/main/java/com/sparkweb/core/
 ├── CoreApplication.java          
+├── Client/
+│   └── Client.java              
 ├── Config/
 │   └── RestClientConfig.java     
 ├── controller/
@@ -132,6 +135,64 @@ private Response getResponse(String url) {
   - `200 OK`: Datos recuperados exitosamente
   - `500 Internal Server Error`: Error en la consulta o validación
 
+## Cliente de Pruebas de Carga
+
+### `Client` - Herramienta de Testing Concurrente
+
+El proyecto incluye un cliente independiente (`Client.java`) diseñado para realizar pruebas de carga y evaluar el rendimiento del sistema de cache implementado.
+
+#### Características del Cliente:
+
+**Configuración de Pruebas:**
+- **Número de peticiones**: 20 requests concurrentes por defecto
+- **Pool de hilos**: ExecutorService con 10 hilos simultáneos
+- **Endpoint objetivo**: `/api/Data/intraday?symbol=IBM&interval=5min`
+- **Cliente HTTP**: Java 11+ HttpClient nativo
+
+**Funcionalidades Clave:**
+```java
+// Configuración del pool de hilos
+ExecutorService executor = Executors.newFixedThreadPool(10);
+
+// Cliente HTTP moderno
+HttpClient client = HttpClient.newHttpClient();
+
+// Request concurrente
+HttpRequest request = HttpRequest.newBuilder()
+    .uri(URI.create(BASE_URL))
+    .GET()
+    .build();
+```
+
+#### 📊 Propósito del Cliente:
+
+1. **Validación de Cache**: Demuestra que las primeras requests hacen llamadas a la API externa, mientras que las subsecuentes utilizan el cache
+2. **Testing de Concurrencia**: Verifica que el `ConcurrentHashMap` maneja correctamente múltiples requests simultáneas
+
+
+#### 🎯 Uso del Cliente:
+
+**Ejecutar desde línea de comandos:**
+```bash
+# Compilar el proyecto
+./mvnw clean compile
+
+# Ejecutar el servidor (en terminal separado)
+./mvnw spring-boot:run
+
+# Ejecutar el cliente de pruebas (en otro terminal)
+java -cp target/classes com.sparkweb.core.Client.Client
+```
+
+**Salida esperada:**
+```
+Request #1 | Status: 200
+Response: {"Meta Data":{"1. Information":"Intraday (5min)...
+
+Request #2 | Status: 200  
+Response: {"Meta Data":{"1. Information":"Intraday (5min)...
+```
+
 ## Configuración
 
 ### `application.properties`
@@ -192,4 +253,4 @@ Ejecutar las pruebas unitarias:
 1. **Cache**: Evita llamadas redundantes a la API externa
 2. **Validación temprana**: Falla rápido con parámetros inválidos
 3. **Thread-safety**: Uso de `ConcurrentHashMap` para acceso concurrente
-4. **Manejo de errores**: Previene fallos en cascada
+

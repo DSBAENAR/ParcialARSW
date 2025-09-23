@@ -61,7 +61,7 @@ public class ApiService {
 
         String cacheKey = "daily-" + symbol + "-" + interval;
 
-        if(cache.containsKey(cacheKey)){return cache.get(cacheKey);}        
+        if(cache.containsKey(cacheKey)) {return cache.get(cacheKey);}        
 
 
         String url = apiUrl + 

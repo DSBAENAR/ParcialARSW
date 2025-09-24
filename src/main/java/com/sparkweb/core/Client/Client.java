@@ -1,5 +1,6 @@
 package com.sparkweb.core.Client;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -34,22 +35,22 @@ public class Client {
                         response.body().substring(0, Math.min(200, response.body().length()))
                     );
                     System.out.println("\n");
-                } catch (Exception e) {
+                } catch (InterruptedException e) {
+                    System.out.printf("Request #%d | FAIL: %s%n", requestId, e.getMessage());
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
                     System.out.printf("Request #%d | FAIL: %s%n", requestId, e.getMessage());
                 }
             });
         }
 
-        // Iniciar hilos
         for (Thread t : threads) {
             t.start();
         }
 
-        // Esperar que todos terminen (join)
         for (Thread th : threads) {
             th.join();
         }
 
-        System.out.println("=== Todas las requests terminaron ===");
     }
 }

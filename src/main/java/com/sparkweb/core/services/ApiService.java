@@ -55,11 +55,9 @@ public class ApiService {
         return response;
     }
 
-    public Response getDataDaily(String symbol, String interval){
+    public Response getDataByFunction(Times function, String symbol, String interval ,String outpuSize, String dataType){
 
-        checkParameters(symbol, interval);
-
-        String cacheKey = "daily-" + symbol + "-" + interval;
+        String cacheKey = function + symbol + "-";
 
         if(cache.containsKey(cacheKey)) {return cache.get(cacheKey);}        
 
@@ -67,10 +65,14 @@ public class ApiService {
         String url = apiUrl + 
                      "?function=" + Times.TIME_SERIES_DAILY +
                      "&symbol=" + symbol +
-                     "&interval=" + interval +
+                     "&outputsize=" +
+                     "&datatype=" +
                      "&apikey=" + apiKey;
 
-        
+         if (function.equals(Times.TIME_SERIES_INTRADAY) && interval != null) {
+            url.concat("&interval=" + interval);
+        }
+
         Response response = getResponse(url);
 
         cache.put(cacheKey, response);

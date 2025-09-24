@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record Response(
+    
     @JsonProperty("Meta Data") Metadata metadata,
     @JsonAlias({
         "Time Series (1min)",

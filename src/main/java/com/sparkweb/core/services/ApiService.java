@@ -63,7 +63,7 @@ public class ApiService {
 
 
         String url = apiUrl + 
-                     "?function=" + Times.TIME_SERIES_DAILY +
+                     "?function=" + function+
                      "&symbol=" + symbol +
                      "&outputsize=" +
                      "&datatype=" +
@@ -81,53 +81,6 @@ public class ApiService {
 
     }
 
-
-
-    public Response getDataWeekly(String symbol, String interval){
-
-        checkParameters(symbol, interval);
-
-        String cacheKey = "weekly-" + symbol + "-" + interval;
-        
-        if(cache.containsKey(cacheKey)){return cache.get(cacheKey);}  
-
-        String url = apiUrl + 
-                     "?function=" + Times.TIME_SERIES_WEEKLY +
-                     "&symbol=" + symbol +
-                     "&interval=" + interval +
-                     "&apikey=" + apiKey;
-
-        
-        Response response = getResponse(url);
-
-        cache.put(cacheKey, response);
-
-        return response;
-
-    }
-
-    public Response getDataMonthly(String symbol, String interval){
-
-        checkParameters(symbol, interval);
-
-        String cacheKey = "monthly-" + symbol + "-" + interval;
-        
-        if(cache.containsKey(cacheKey)){return cache.get(cacheKey);}  
-
-        String url = apiUrl + 
-                     "?function=" + Times.TIME_SERIES_MONTHLY +
-                     "&symbol=" + symbol +
-                     "&interval=" + interval +
-                     "&apikey=" + apiKey;
-
-        
-        Response response = getResponse(url);
-
-        cache.put(cacheKey, response);
-
-        return response;
-
-    }
 
     private Response getResponse(String url) {
         Response response = restTemplate.getForObject(url, Response.class);
